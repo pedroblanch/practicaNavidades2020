@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{provincia.PRO}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+     </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-item *ngFor="let municipio of municipios" (click)="onClickMunicipio(municipio)">
+    {{municipio.NOMBRE}}
+  </ion-item>
+  
+</ion-content>
