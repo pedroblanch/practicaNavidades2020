@@ -15,14 +15,12 @@ export class PrediccionPage implements OnInit {
   diaProximo:Dia;
   estadoCielo:EstadoCielo[];
   precipitacion:Precipitacion[];
-  probabilidad:ProbPrecipitacion[];
-  
+  probabilidad:any[];
 
   constructor(private apiService: ApiServiceProvider, 
     private activatedRoute: ActivatedRoute){
       this.activatedRoute.queryParams.subscribe(params => {
         this.municipio = JSON.parse(params['municipio']);
-        console.log(this.municipio);
     });
   }
 
@@ -36,54 +34,94 @@ export class PrediccionPage implements OnInit {
           this.diaActual=data.prediccion.dia[0];
           this.diaProximo=data.prediccion.dia[1];
           var d = new Date();
-          var hora:string = d.getHours().toString().padStart(2, "0");
+          var hora:number = d.getHours();
           this.estadoCielo=[];
           var contador=24;
           this.diaActual.estadoCielo.forEach(element => {
-            if(element.periodo>=hora && contador>0){
+            if(Number(element.periodo)>=hora && contador>0){
               this.estadoCielo.push(element);
               contador--;
             }
           });
           this.diaProximo.estadoCielo.forEach(element => {
-            if(element.periodo<hora && contador>0){
+            if(contador>0){
               this.estadoCielo.push(element);
               contador--;
             }
           });
+
+          //creo el array de 24 elementos con las precipitaciones de cada hora
           this.precipitacion=[];
-          this.probabilidad=[];
           var contador=24;
           this.diaActual.precipitacion.forEach(element => {
-            if(element.periodo>=hora && contador>0){
+            if(Number(element.periodo)>=hora && contador>0){
               this.precipitacion.push(element);
               contador--;
-              
-              /*
-              this.diaActual.probPrecipitacion.forEach(element2=>{
-                if(element2.periodo.includes(element.periodo)){
-                  this.probabilidad.push(element2);
-                }
-              });
-              */
-              
             }
-          });
+          });//end_forEach
           this.diaProximo.precipitacion.forEach(element => {
-            if(element.periodo<hora && contador>0){
+            if(contador>0){
               this.precipitacion.push(element);
               contador--;
-              /*
-              this.diaProximo.probPrecipitacion.forEach(element2=>{
-                if(element2.periodo.includes(element.periodo)){
-                  this.probabilidad.push(element2);
+            }//end_if
+          });//end_forEach
+
+          //creo el array de 24 elementos con la probabilidad de precipitación para cada hora
+          this.probabilidad=[];
+          var contador:number=24;
+          this.diaActual.probPrecipitacion.forEach(element2=>{
+            var horaDesde=Number(element2.periodo.substring(0,2));
+            var horaHasta=Number(element2.periodo.substring(2,4));
+            var horaAux;
+            if(horaDesde<horaHasta){
+              for(horaAux=horaDesde;horaAux<horaHasta;horaAux++){
+                if(hora<=horaAux){
+                  this.probabilidad.push({"hora":horaAux,
+                    "value":element2.value});
+                  contador--;
                 }
-              });
-              */
-              
+              }
             }
-          });
-      })
+            else{  //es un intervalo del tipo de 19 a 01
+              for(horaAux=horaDesde;horaAux<=24;horaAux++){
+                if(hora<=horaAux){
+                  if(horaAux==24)
+                    this.probabilidad.push({"hora":0,
+                      "value":element2.value});
+                  else
+                    this.probabilidad.push({"hora":horaAux,
+                      "value":element2.value});
+                  contador=contador--;
+                }
+              }
+            }//end_if
+          });//end_forEach
+          this.diaProximo.probPrecipitacion.forEach(element2=>{
+            var horaDesde=Number(element2.periodo.substring(0,2));
+            var horaHasta=Number(element2.periodo.substring(2,4));
+            var horaAux;
+            if(horaDesde<horaHasta){
+              for(horaAux=horaDesde;horaAux<horaHasta;horaAux++){
+                if(hora>horaAux && contador>0){
+                  this.probabilidad.push({"hora":horaAux,
+                    "value":element2.value});
+                  contador--;
+                }
+              }
+            }
+            else{  //es un intervalo del tipo de 19 a 01
+              for(horaAux=horaDesde;horaAux<=23;horaAux++){
+                if(hora>horaAux && contador>0){
+                  this.probabilidad.push({"hora":horaAux,
+                    "value":element2.value});
+                  contador--;
+                }
+              }
+            }//end_if
+          });//end_forEach
+          console.log(this.probabilidad);
+          
+      })//end_.then
       .catch( (error:string) => {
           console.log(error);
       });
