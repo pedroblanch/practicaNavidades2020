@@ -18,6 +18,7 @@
               {{estadoCieloItem.periodo}}:00 - {{estadoCieloItem.descripcion}}<br>
               {{precipitacion[indice].value}}mm - 
               <span *ngIf="indice < probabilidad.length">{{probabilidad[indice].value}}%</span>
+              - {{temperatura[indice].value}}°c
           </ion-col>
         </ion-row>
       </ion-grid> 

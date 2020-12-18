@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiServiceProvider } from 'src/providers/api-service/api-service';
-import { Dia, EstadoCielo, Municipio, Precipitacion, Prediccion, ProbPrecipitacion, RespuestaPrediccionHorariaMunicipio } from '../modelo/interfaces';
+import { Dia, EstadoCielo, Municipio, Precipitacion, Prediccion, ProbPrecipitacion, RespuestaPrediccionHorariaMunicipio, Temperatura } from '../modelo/interfaces';
 
 @Component({
   selector: 'app-prediccion',
@@ -16,6 +16,7 @@ export class PrediccionPage implements OnInit {
   estadoCielo:EstadoCielo[];
   precipitacion:Precipitacion[];
   probabilidad:any[];
+  temperatura:Temperatura[];
 
   constructor(private apiService: ApiServiceProvider, 
     private activatedRoute: ActivatedRoute){
@@ -49,6 +50,23 @@ export class PrediccionPage implements OnInit {
               contador--;
             }
           });
+
+          //creo el array de 24 elementos con la temperatura de cada hora
+          this.temperatura=[];
+          var contador=24;
+          this.diaActual.temperatura.forEach(element => {
+            if(Number(element.periodo)>=hora && contador>0){
+              this.temperatura.push(element);
+              contador--;
+            }
+          });
+          this.diaProximo.temperatura.forEach(element => {
+            if(contador>0){
+              this.temperatura.push(element);
+              contador--;
+            }
+          });
+          console.log(this.temperatura);
 
           //creo el array de 24 elementos con las precipitaciones de cada hora
           this.precipitacion=[];
@@ -119,7 +137,6 @@ export class PrediccionPage implements OnInit {
               }
             }//end_if
           });//end_forEach
-          console.log(this.probabilidad);
           
       })//end_.then
       .catch( (error:string) => {
