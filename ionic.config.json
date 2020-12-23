@@ -1,5 +1,7 @@
 {
   "name": "practicaNavidades2020",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
