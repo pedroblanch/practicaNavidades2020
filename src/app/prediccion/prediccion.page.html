@@ -15,10 +15,10 @@
             <ion-img src="../../../assets/icon/{{estadoCieloItem.descripcion}}.png"></ion-img>
           </ion-col>  
           <ion-col size=10>
-              {{estadoCieloItem.periodo}}:00 - {{estadoCieloItem.descripcion}}<br>
-              {{precipitacion[indice].value}}mm - 
+              {{estadoCieloItem.periodo}}:00   {{estadoCieloItem.descripcion}}<br>
+              {{precipitacion[indice].value}}mm   
               <span *ngIf="indice < probabilidad.length">{{probabilidad[indice].value}}%</span>
-              - {{temperatura[indice].value}}°c
+                {{temperatura[indice].value}}°c
           </ion-col>
         </ion-row>
       </ion-grid> 
